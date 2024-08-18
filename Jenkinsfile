@@ -1,4 +1,4 @@
-def registry = 'https://saidemy.jfrog.io/'
+def registry = 'https://devops0199.jfrog.io/'
 
 pipeline {
     // Specify the agent to run the pipeline
@@ -38,11 +38,11 @@ pipeline {
         stage('SonarQube analysis') {
             environment {
                 // Set the SonarQube scanner tool
-                scannerHome = tool 'saidemy-sonar-scanner'
+                scannerHome = tool 'sonarqube-scanner'
             }
             steps {
                 // Execute SonarQube analysis within the SonarQube environment
-                withSonarQubeEnv('saidemy-sonarqube-server') {
+                withSonarQubeEnv('sonarqube-server') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
@@ -55,7 +55,7 @@ pipeline {
                     // Log message to indicate JAR publish start
                     echo '<--------------- Jar Publish Started --------------->'
                     // Define the Artifactory server
-                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact-cred"
+                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "jfrog-cred"
                     // Set properties for the build
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     // Define the upload specification
@@ -63,7 +63,7 @@ pipeline {
                           "files": [
                             {
                               "pattern": "jarstaging/(*)",
-                              "target": "sai-libs-release-local/{1}",
+                              "target": "testrepo1-libs-release-local/{1}",
                               "flat": "false",
                               "props": "${properties}",
                               "exclusions": [ "*.sha1", "*.md5"]
